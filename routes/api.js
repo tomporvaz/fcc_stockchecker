@@ -11,10 +11,29 @@
 var expect = require('chai').expect;
 var MongoClient = require('mongodb');
 const axios = require('axios');
+const mongoose = require('mongooese');
+const Schema = mongoose.Schema;
+mongoose.set('useFindAndModify', false);
 
 
 const CONNECTION_STRING = process.env.DB; //MongoClient.connect(CONNECTION_STRING, function(err, db) {});
 //connect to database using mongoose
+mongoose.connect(CONNECTION_STRING || 'mongodb://localhost/exercise-track' )
+  //from quick start guide in mongoose docs
+  let db = mongoose.connection;
+  db.on("error", console.error.bind(console, 'connection error'));
+  db.once('open', function (){
+    console.log("DB sucess using mongoose!")
+  });
+  
+  //issue schema and model
+  const stockSchema = new Schema({
+    stock: {type: String, required: true},
+    likes: {type: Number}
+  });
+
+  const Stock = mongoose.model('Stock', stockSchema);
+
 
 module.exports = function (app) {
   
