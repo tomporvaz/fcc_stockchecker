@@ -22,9 +22,9 @@ module.exports = function (app) {
   .get(function (req, res){
     
     //test axios with alpha vantage api
-    const apiURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${req.body.stock}&apikey=${process.env.ALPHAVANTAGE_API_KEY}`
+    const apiURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${req.query.stock}&apikey=${process.env.ALPHAVANTAGE_API_KEY}`;
     axios.get(apiURL)
-    .then(res => console.log(res))
+    .then(response => console.log(response.data))
     .catch(error => console.log('Error', error));
 
 
