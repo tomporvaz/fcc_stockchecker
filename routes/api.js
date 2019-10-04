@@ -11,7 +11,7 @@
 var expect = require('chai').expect;
 var MongoClient = require('mongodb');
 const axios = require('axios');
-const mongoose = require('mongooese');
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 mongoose.set('useFindAndModify', false);
 
