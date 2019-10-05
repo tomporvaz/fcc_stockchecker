@@ -29,7 +29,8 @@ mongoose.connect(CONNECTION_STRING || 'mongodb://localhost/exercise-track' )
   //issue schema and model
   const stockSchema = new Schema({
     stock: {type: String, required: true},
-    likes: {type: Number}
+    likes: {type: Number},
+    IP: [String]
   });
 
   const Stock = mongoose.model('Stock', stockSchema);
@@ -44,14 +45,34 @@ module.exports = function (app) {
     const apiURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${req.query.stock}&apikey=${process.env.ALPHAVANTAGE_API_KEY}`;
     
     axios.get(apiURL)
-    .then(response => console.log(response.data))
+    .then(response => {
+      console.log(`Stock Price: ${response.data['Global Quote']['05. price']}`)
+    })
     .catch(error => console.log('Error', error));
 
 
     //create response for only one stock ticker
+    console.log(findUpdateStock(req.stock, req.like, req.ip));
     
     //create resonse for two stock tickers
     
   });
+
+  const findUpdateStock = function (usersStock, usersLike, userIP) {
+    let newStock = new Stock({
+      stock: usersStock,
+      likes: 0,
+      IP: []
+    })
+
+    Stock.findOne({stock: usersStock}, function (err, stockDoc){
+      if(err){console.error(err)};
+      if(userLike && !stockDoc.includes(userIP)){
+        stockDoc.likes++;
+        stockDoc.IP.push(userIP);
+        Stock.update({_id: stockDoc._id}, stockDoc);
+      };
+    })
+  }
   
 };
