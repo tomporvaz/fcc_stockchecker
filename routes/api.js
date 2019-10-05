@@ -52,7 +52,8 @@ module.exports = function (app) {
 
 
     //create response for only one stock ticker
-    console.log(findUpdateStock(req.stock, req.like, req.ip));
+    console.log(req.ip);
+    console.log(findUpdateStock(req.query.stock, req.query.like, req.ip));
     
     //create resonse for two stock tickers
     
@@ -64,10 +65,13 @@ module.exports = function (app) {
       likes: 0,
       IP: []
     })
+    console.log("we made inside the findUpdateStock function");
 
     Stock.findOne({stock: usersStock}, function (err, stockDoc){
       if(err){console.error(err)};
-      if(userLike && !stockDoc.includes(userIP)){
+      console.log("callback in findOne! stockDoc is next...");
+      console.log(stockDoc);
+      if(usersLike && !stockDoc.includes(userIP)){
         stockDoc.likes++;
         stockDoc.IP.push(userIP);
         Stock.update({_id: stockDoc._id}, stockDoc);
