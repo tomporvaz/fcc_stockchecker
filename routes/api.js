@@ -81,7 +81,7 @@ module.exports = function (app) {
         newStock.IP.push(userIP);
         newStock.save(function (err, savedStockDoc){
           if(err){console.error(err)};
-          returnedStock = savedStockDoc;
+          return savedStockDoc;
         })
       } else {
         if(stockDoc.IP.includes(userIP)){
@@ -94,12 +94,10 @@ module.exports = function (app) {
         }
          Stock.update({_id: stockDoc._id}, stockDoc, function(err, updatedStockDoc){
            if(err){console.error(err)};
-           returnedStock = updatedStockDoc;
+           return updatedStockDoc;
          })
-      }
+        }
 
-    return returnedStock;  
-    
     })
   }
   
