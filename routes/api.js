@@ -81,20 +81,20 @@ module.exports = function (app) {
         newStock.IP.push(userIP);
         newStock.save(function (err, savedStockDoc){
           if(err){console.error(err)};
-          return savedStockDoc;
+          return newStock;
         })
       } else {
         if(stockDoc.IP.includes(userIP)){
           //nothing happens
         } else { 
           if(usersLike) {
-            stockDoc.likes++;
+            newStock.likes = stockDoc.likes++;
           }
-          stockDoc.IP.push(userIP);
+          newStock.IP = stockDoc.IP.push(userIP);
         }
-         Stock.update({_id: stockDoc._id}, stockDoc, function(err, updatedStockDoc){
+         Stock.update({_id: stockDoc._id}, newStock, function(err, rawUpdateResponse){
            if(err){console.error(err)};
-           return updatedStockDoc;
+           return newStock;
          })
         }
 
