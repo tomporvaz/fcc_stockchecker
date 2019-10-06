@@ -88,13 +88,13 @@ module.exports = function (app) {
           //nothing happens
         } else { 
           if(usersLike) {
-            newStock.likes = stockDoc.likes++;
+            stockDoc.likes++;
           }
           newStock.IP = stockDoc.IP.push(userIP);
         }
-         Stock.update({_id: stockDoc._id}, newStock, function(err, rawUpdateResponse){
+         Stock.update({_id: stockDoc._id}, stockDoc, function(err, rawUpdateResponse){
            if(err){console.error(err)};
-           return newStock;
+           return stockDoc;
          })
         }
 
