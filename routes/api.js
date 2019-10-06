@@ -53,7 +53,9 @@ module.exports = function (app) {
     
     //create response for only one stock ticker
     console.log(req.ip);
-    console.log(findUpdateStock(req.query.stock, req.query.like, req.ip));
+    findUpdateStock(req.query.stock, req.query.like, req.ip)
+    .then(value => console.log(value))
+    .catch(error => console.log('Error: ', error)); 
     
     //create resonse for two stock tickers
     
@@ -67,38 +69,42 @@ module.exports = function (app) {
     });
     let returnedStock = {};
     console.log("we made inside the findUpdateStock function");
-    
-    Stock.findOne({stock: usersStock}, function (err, stockDoc){
-      if(err){console.error(err)};
-      console.log("callback in findOne! stockDoc is next...");
-      console.log(stockDoc);
-      
-      //logic splits here if stock is found or not
-      if(!stockDoc){
-        if(usersLike){
-          newStock.likes++;
+    return new Promise ((resolve, reject) => {
+      Stock.findOne({stock: usersStock}, function (err, stockDoc){
+        if(err){
+          console.error(err)
+          reject(err);
         };
-        newStock.IP.push(userIP);
-        newStock.save(function (err, savedStockDoc){
-          if(err){console.error(err)};
-          return newStock;
-        })
-      } else {
-        if(stockDoc.IP.includes(userIP)){
-          //nothing happens
-        } else { 
-          if(usersLike) {
-            stockDoc.likes++;
+        console.log("callback in findOne! stockDoc is next...");
+        console.log(stockDoc);
+        
+        //logic splits here if stock is found or not
+        if(!stockDoc){
+          if(usersLike){
+            newStock.likes++;
+          };
+          newStock.IP.push(userIP);
+          newStock.save(function (err, savedStockDoc){
+            if(err){console.error(err)};
+            resolve(newStock);
+          })
+        } else {
+          if(stockDoc.IP.includes(userIP)){
+            //nothing happens
+          } else { 
+            if(usersLike) {
+              stockDoc.likes++;
+            }
+            newStock.IP = stockDoc.IP.push(userIP);
           }
-          newStock.IP = stockDoc.IP.push(userIP);
+          Stock.updateOne({_id: stockDoc._id}, stockDoc, function(err, rawUpdateResponse){
+            if(err){console.error(err)};
+            resolve(stockDoc);
+          })
         }
-         Stock.update({_id: stockDoc._id}, stockDoc, function(err, rawUpdateResponse){
-           if(err){console.error(err)};
-           return stockDoc;
-         })
-        }
-
-    })
+        
+      })
+    });
   }
   
 };
