@@ -30,7 +30,7 @@ suite('Functional Tests', function() {
         assert.property(res.body.stockData, 'stock');
         assert.property(res.body.stockData, 'price');
         assert.property(res.body.stockData, 'likes');
-        assert.equal(res.body.stockData.stock, 'goog');
+        assert.equal(res.body.stockData.stock, 'GOOG');
         
         done();
       });
@@ -48,7 +48,7 @@ suite('Functional Tests', function() {
         assert.property(res.body.stockData, 'stock');
         assert.property(res.body.stockData, 'price');
         assert.property(res.body.stockData, 'likes');
-        assert.equal(res.body.stockData.stock, 'lyft');
+        assert.equal(res.body.stockData.stock, 'LYFT');
         assert.isAbove(res.body.stockData.likes, 0);
         testLikes = res.body.stockData.likes;
         
@@ -68,7 +68,7 @@ suite('Functional Tests', function() {
         assert.property(res.body.stockData, 'stock');
         assert.property(res.body.stockData, 'price');
         assert.property(res.body.stockData, 'likes');
-        assert.equal(res.body.stockData.stock, 'lyft');
+        assert.equal(res.body.stockData.stock, 'LYFT');
         assert.equal(res.body.stockData.likes, testLikes);
   
         done();
@@ -90,8 +90,8 @@ suite('Functional Tests', function() {
         assert.property(res.body.stockData[1], 'stock');
         assert.property(res.body.stockData[1], 'price');
         assert.property(res.body.stockData[1], 'rel_likes');
-        assert.equal(res.body.stockData[0].stock, 'goog');
-        assert.equal(res.body.stockData[1].stock, 'amzn');
+        assert.equal(res.body.stockData[0].stock, 'MSFT');
+        assert.equal(res.body.stockData[1].stock, 'AMZN');
   
         done();
       });
@@ -113,8 +113,8 @@ suite('Functional Tests', function() {
         assert.property(res.body.stockData[1], 'stock');
         assert.property(res.body.stockData[1], 'price');
         assert.property(res.body.stockData[1], 'rel_likes');
-        assert.equal(res.body.stockData[0].stock, 'msft');
-        assert.equal(res.body.stockData[1].stock, 'amzn');
+        assert.equal(res.body.stockData[0].stock, 'MSFT');
+        assert.equal(res.body.stockData[1].stock, 'AMZN');
         assert.equal(res.body.stockData[0].rel_likes, 0);
         assert.equal(res.body.stockData[1].rel_likes, 0);
   
