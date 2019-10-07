@@ -39,7 +39,7 @@ suite('Functional Tests', function() {
     test('1 stock with like', function(done) {
       chai.request(server)
       .get('/api/stock-prices')
-      .query({stock: 'goog', like: true})
+      .query({stock: 'lyft', like: true})
       .end(function(err, res){
         if(err){console.error(err)};
         
@@ -48,7 +48,7 @@ suite('Functional Tests', function() {
         assert.property(res.body.stockData, 'stock');
         assert.property(res.body.stockData, 'price');
         assert.property(res.body.stockData, 'likes');
-        assert.equal(res.body.stockData.stock, 'goog');
+        assert.equal(res.body.stockData.stock, 'lyft');
         assert.isAbove(res.body.stockData.likes, 0);
         testLikes = res.body.stockData.likes;
         
@@ -59,7 +59,7 @@ suite('Functional Tests', function() {
     test('1 stock with like again (ensure likes arent double counted)', function(done) {
       chai.request(server)
       .get('/api/stock-prices')
-      .query({stock: 'goog', like: true})
+      .query({stock: 'lyft', like: true})
       .end(function(err, res){
         if(err){console.error(err)};
         
@@ -68,7 +68,7 @@ suite('Functional Tests', function() {
         assert.property(res.body.stockData, 'stock');
         assert.property(res.body.stockData, 'price');
         assert.property(res.body.stockData, 'likes');
-        assert.equal(res.body.stockData.stock, 'goog');
+        assert.equal(res.body.stockData.stock, 'lyft');
         assert.equal(res.body.stockData.likes, testLikes);
   
         done();
@@ -78,7 +78,7 @@ suite('Functional Tests', function() {
     test('2 stocks', function(done) {
       chai.request(server)
       .get('/api/stock-prices')
-      .query({stock: 'goog', stock: 'amzn'})
+      .query({stock: 'msft', stock: 'amzn'})
       .end(function(err, res){
         if(err){console.error(err)};
         
@@ -101,7 +101,7 @@ suite('Functional Tests', function() {
     test('2 stocks with like', function(done) {
       chai.request(server)
       .get('/api/stock-prices')
-      .query({stock: 'goog', stock: 'amzn', like: true})
+      .query({stock: 'msft', stock: 'amzn', like: true})
       .end(function(err, res){
         if(err){console.error(err)};
         
@@ -113,7 +113,7 @@ suite('Functional Tests', function() {
         assert.property(res.body.stockData[1], 'stock');
         assert.property(res.body.stockData[1], 'price');
         assert.property(res.body.stockData[1], 'rel_likes');
-        assert.equal(res.body.stockData[0].stock, 'goog');
+        assert.equal(res.body.stockData[0].stock, 'msft');
         assert.equal(res.body.stockData[1].stock, 'amzn');
         assert.equal(res.body.stockData[0].rel_likes, 0);
         assert.equal(res.body.stockData[1].rel_likes, 0);
