@@ -41,26 +41,23 @@ module.exports = function (app) {
   app.route('/api/stock-prices')
   .get(function (req, res){
     
-    //test axios with alpha vantage api
-    const apiURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${req.query.stock}&apikey=${process.env.ALPHAVANTAGE_API_KEY}`;
-    
-    axios.get(apiURL)
-    .then(response => {
-      console.log(`Stock Price: ${response.data['Global Quote']['05. price']}`)
-    })
-    .catch(error => console.log('Error', error));
-    
-    
     //create response for only one stock ticker
     console.log(req.ip);
     findUpdateStock(req.query.stock, req.query.like, req.ip)
-    .then(value => console.log(value))
+    .then(value => addStockPrice(value))
+    .then(value => {
+      console.log("PROMISE CHAIN OUTPUT");
+      console.log(value);
+    }
+      )
     .catch(error => console.log('Error: ', error)); 
     
     //create resonse for two stock tickers
     
   });
   
+  //function findUpdateStock, updates or creates stock document in Mongo, 
+  //and returns promise with object
   const findUpdateStock = function (usersStock, usersLike, userIP) {
     let newStock = new Stock({
       stock: usersStock,
@@ -105,6 +102,25 @@ module.exports = function (app) {
         
       })
     });
+  }
+  
+  //function fetches price from AlphaVantage API and returns stock document promise
+  const addStockPrice = function (stockDoc) {
+    return new Promise ((resolve, reject) => {
+      const apiURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${req.query.stock}&apikey=${process.env.ALPHAVANTAGE_API_KEY}`;
+      //call axios with alpha vantage api
+      axios.get(apiURL)
+      .then(response => {
+        stockDoc.price = response.data['Global Quote']['05. price']
+        console.log(`AXIOS Promise - Stock Price: ${response.data['Global Quote']['05. price']}`);
+        resolve(stockDoc);
+
+      })
+      .catch(error => {
+        console.log('Error', error)
+        reject(error);
+      });
+    })
   }
   
 };
