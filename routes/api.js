@@ -107,13 +107,14 @@ module.exports = function (app) {
   //function fetches price from AlphaVantage API and returns stock document promise
   const addStockPrice = function (stockDoc) {
     return new Promise ((resolve, reject) => {
-      const apiURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${req.query.stock}&apikey=${process.env.ALPHAVANTAGE_API_KEY}`;
+      let stockDocClone = {...stockDoc._doc}
+      const apiURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockDoc.stock}&apikey=${process.env.ALPHAVANTAGE_API_KEY}`;
       //call axios with alpha vantage api
       axios.get(apiURL)
       .then(response => {
-        stockDoc.price = response.data['Global Quote']['05. price']
+        stockDocClone.price = response.data['Global Quote']['05. price']
         console.log(`AXIOS Promise - Stock Price: ${response.data['Global Quote']['05. price']}`);
-        resolve(stockDoc);
+        resolve(stockDocClone);
 
       })
       .catch(error => {
