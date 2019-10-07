@@ -67,6 +67,7 @@ module.exports = function (app) {
 //function findUpdateStock, updates or creates stock document in Mongo, 
 //and returns promise with object
 const findUpdateStock = function (usersStock, usersLike, userIP) {
+  usersStock = usersStock.toUpperCase();
   let newStock = new Stock({
     stock: usersStock,
     likes: 0,
