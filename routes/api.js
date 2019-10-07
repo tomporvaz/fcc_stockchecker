@@ -45,10 +45,10 @@ module.exports = function (app) {
     console.log(req.ip);
     findUpdateStock(req.query.stock, req.query.like, req.ip)
     .then(value => addStockPrice(value))
-    .then(value => {
+    /* .then(value => {
       console.log("PROMISE CHAIN OUTPUT");
       console.log(value);
-    })
+    }) */
     .then(stockDocObj => {
       res.json({"stockData": 
       {
