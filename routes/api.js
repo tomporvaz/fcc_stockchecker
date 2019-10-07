@@ -48,80 +48,88 @@ module.exports = function (app) {
     .then(value => {
       console.log("PROMISE CHAIN OUTPUT");
       console.log(value);
-    }
-      )
-    .catch(error => console.log('Error: ', error)); 
-    
-    //create resonse for two stock tickers
-    
-  });
-  
-  //function findUpdateStock, updates or creates stock document in Mongo, 
-  //and returns promise with object
-  const findUpdateStock = function (usersStock, usersLike, userIP) {
-    let newStock = new Stock({
-      stock: usersStock,
-      likes: 0,
-      IP: []
-    });
-    let returnedStock = {};
-    console.log("we made inside the findUpdateStock function");
-    return new Promise ((resolve, reject) => {
-      Stock.findOne({stock: usersStock}, function (err, stockDoc){
-        if(err){
-          console.error(err)
-          reject(err);
-        };
-        console.log("callback in findOne! stockDoc is next...");
-        console.log(stockDoc);
-        
-        //logic splits here if stock is found or not
-        if(!stockDoc){
-          if(usersLike){
-            newStock.likes++;
-          };
-          newStock.IP.push(userIP);
-          newStock.save(function (err, savedStockDoc){
-            if(err){console.error(err)};
-            resolve(newStock);
-          })
-        } else {
-          if(stockDoc.IP.includes(userIP)){
-            //nothing happens
-          } else { 
-            if(usersLike) {
-              stockDoc.likes++;
-            }
-            newStock.IP = stockDoc.IP.push(userIP);
-          }
-          Stock.updateOne({_id: stockDoc._id}, stockDoc, function(err, rawUpdateResponse){
-            if(err){console.error(err)};
-            resolve(stockDoc);
-          })
-        }
-        
-      })
-    });
-  }
-  
-  //function fetches price from AlphaVantage API and returns stock document promise
-  const addStockPrice = function (stockDoc) {
-    return new Promise ((resolve, reject) => {
-      let stockDocClone = {...stockDoc._doc}
-      const apiURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockDoc.stock}&apikey=${process.env.ALPHAVANTAGE_API_KEY}`;
-      //call axios with alpha vantage api
-      axios.get(apiURL)
-      .then(response => {
-        stockDocClone.price = response.data['Global Quote']['05. price']
-        console.log(`AXIOS Promise - Stock Price: ${response.data['Global Quote']['05. price']}`);
-        resolve(stockDocClone);
-
-      })
-      .catch(error => {
-        console.log('Error', error)
-        reject(error);
-      });
     })
-  }
+    .then(stockDocObj => {
+      res.json({"stockData": 
+      {
+        "stock": stockDocObj.stock,
+        "price": stockDocObj.price,
+        "likes": stockDocObj.likes
+      }
+    })
+  })
+  .catch(error => console.log('Error: ', error)); 
   
+  //create resonse for two stock tickers
+  
+});
+
+//function findUpdateStock, updates or creates stock document in Mongo, 
+//and returns promise with object
+const findUpdateStock = function (usersStock, usersLike, userIP) {
+  let newStock = new Stock({
+    stock: usersStock,
+    likes: 0,
+    IP: []
+  });
+  let returnedStock = {};
+  console.log("we made inside the findUpdateStock function");
+  return new Promise ((resolve, reject) => {
+    Stock.findOne({stock: usersStock}, function (err, stockDoc){
+      if(err){
+        console.error(err)
+        reject(err);
+      };
+      console.log("callback in findOne! stockDoc is next...");
+      console.log(stockDoc);
+      
+      //logic splits here if stock is found or not
+      if(!stockDoc){
+        if(usersLike){
+          newStock.likes++;
+        };
+        newStock.IP.push(userIP);
+        newStock.save(function (err, savedStockDoc){
+          if(err){console.error(err)};
+          resolve(newStock);
+        })
+      } else {
+        if(stockDoc.IP.includes(userIP)){
+          //nothing happens
+        } else { 
+          if(usersLike) {
+            stockDoc.likes++;
+          }
+          newStock.IP = stockDoc.IP.push(userIP);
+        }
+        Stock.updateOne({_id: stockDoc._id}, stockDoc, function(err, rawUpdateResponse){
+          if(err){console.error(err)};
+          resolve(stockDoc);
+        })
+      }
+      
+    })
+  });
+}
+
+//function fetches price from AlphaVantage API and returns stock document promise
+const addStockPrice = function (stockDoc) {
+  return new Promise ((resolve, reject) => {
+    let stockDocClone = {...stockDoc._doc}
+    const apiURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockDoc.stock}&apikey=${process.env.ALPHAVANTAGE_API_KEY}`;
+    //call axios with alpha vantage api
+    axios.get(apiURL)
+    .then(response => {
+      stockDocClone.price = response.data['Global Quote']['05. price']
+      console.log(`AXIOS Promise - Stock Price: ${response.data['Global Quote']['05. price']}`);
+      resolve(stockDocClone);
+      
+    })
+    .catch(error => {
+      console.log('Error', error)
+      reject(error);
+    });
+  })
+}
+
 };
