@@ -42,27 +42,38 @@ module.exports = function (app) {
   .get(function (req, res){
     
     //create response for only one stock ticker
-    console.log(req.ip);
-    findUpdateStock(req.query.stock, req.query.like, req.ip)
-    .then(value => addStockPrice(value))
-    /* .then(value => {
-      console.log("PROMISE CHAIN OUTPUT");
-      console.log(value);
-    }) */
+    findUpdatePriceSingleStock(req.query.stock, req.query.like, req.ip)
     .then(stockDocObj => {
-      res.json({"stockData": 
-      {
-        "stock": stockDocObj.stock,
-        "price": stockDocObj.price,
-        "likes": stockDocObj.likes
-      }
+      res.json(stockDocObj)
+    });
+    
+    
+    //create resonse for two stock tickers
+    
+  });
+  
+  //findUpdatePriceSingleStock adds the price to the findUpdateStock promise
+  const findUpdatePriceSingleStock = function(usersStock, usersLike, userIP) {
+    return new Promise((resolve, reject) => {
+      findUpdateStock(usersStock, usersLike, userIP)
+      .then(value => addStockPrice(value))
+      /* .then(value => {
+        console.log("PROMISE CHAIN OUTPUT");
+        console.log(value);
+      }) */
+      .then(stockDocObj => {
+        resolve({"stockData": 
+        {
+          "stock": stockDocObj.stock,
+          "price": stockDocObj.price,
+          "likes": stockDocObj.likes
+        }
+      })
     })
+    .catch(error => reject('Error: ', error)); 
   })
-  .catch(error => console.log('Error: ', error)); 
-  
-  //create resonse for two stock tickers
-  
-});
+}
+
 
 //function findUpdateStock, updates or creates stock document in Mongo, 
 //and returns promise with object
