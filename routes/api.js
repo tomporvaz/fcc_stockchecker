@@ -41,16 +41,44 @@ module.exports = function (app) {
   app.route('/api/stock-prices')
   .get(function (req, res){
     
-    //create response for only one stock ticker
-    findUpdatePriceSingleStock(req.query.stock, req.query.like, req.ip)
-    .then(stockDocObj => {
-      res.json(stockDocObj)
-    });
-    
-    
-    //create resonse for two stock tickers
-    
+    if(typeof req.query.stock === 'string'){
+      
+      //create response for only one stock ticker
+      findUpdatePriceSingleStock(req.query.stock, req.query.like, req.ip)
+      .then(stockDocObj => {
+        res.json(stockDocObj)
+      });
+    } else if(typeof req.query.stock === 'object'){
+      const stock1 = req.query.stock[0];
+      const stock2 = req.query.stock[1];
+      //create resonse for two stock tickers
+      findUpdateTwoStocks(req.query.stock[0], req.query.stock[1], req.query.like, req.ip);      
+    }
   });
+
+  //async function to compose the results of two promises
+  const findUpdateTwoStocks = async function(stock1, stock2, usersLike, userIP){
+    const stock1Promise = await findUpdatePriceSingleStock(stock1, usersLike, userIP);
+    const stock2Promise = await findUpdatePriceSingleStock(stock2, usersLike, userIP);
+
+    //compose stockPromises into one response
+    stock1Promise.then((stock1obj) => {
+      res.json({
+        "stockData": [
+          {
+            "stock": stock1obj.stock,
+            "price": stock1obj.price,
+            "rel_likes": "finish calculation for this code"
+          },
+          {
+            "stock": stock2Promise.stock,
+            "price": stock2Promise.price,
+            "rel_likes": "finish calculation for this code"
+          }
+        ]
+      })
+    })
+  }
   
   //findUpdatePriceSingleStock adds the price to the findUpdateStock promise
   const findUpdatePriceSingleStock = function(usersStock, usersLike, userIP) {
