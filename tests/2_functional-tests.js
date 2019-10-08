@@ -78,7 +78,7 @@ suite('Functional Tests', function() {
     test('2 stocks', function(done) {
       chai.request(server)
       .get('/api/stock-prices')
-      .query({stock: 'msft', stock: 'amzn'})
+      .query({stock: ['msft','amzn']})
       .end(function(err, res){
         if(err){console.error(err)};
         
@@ -101,7 +101,7 @@ suite('Functional Tests', function() {
     test('2 stocks with like', function(done) {
       chai.request(server)
       .get('/api/stock-prices')
-      .query({stock: 'msft', stock: 'amzn', like: true})
+      .query({stock: ['uber', 'tsla'], like: true})
       .end(function(err, res){
         if(err){console.error(err)};
         
@@ -113,8 +113,8 @@ suite('Functional Tests', function() {
         assert.property(res.body.stockData[1], 'stock');
         assert.property(res.body.stockData[1], 'price');
         assert.property(res.body.stockData[1], 'rel_likes');
-        assert.equal(res.body.stockData[0].stock, 'MSFT');
-        assert.equal(res.body.stockData[1].stock, 'AMZN');
+        assert.equal(res.body.stockData[0].stock, 'UBER');
+        assert.equal(res.body.stockData[1].stock, 'TSLA');
         assert.equal(res.body.stockData[0].rel_likes, 0);
         assert.equal(res.body.stockData[1].rel_likes, 0);
   
