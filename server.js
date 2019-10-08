@@ -23,8 +23,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet({
   contentSecurityPolicy: {
     directives:{
-      defaultSrc: ["self"],
-      styleSrc: ["self"]
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'"]
     }
   }
 }));
