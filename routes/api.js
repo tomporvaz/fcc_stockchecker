@@ -48,36 +48,50 @@ module.exports = function (app) {
       .then(stockDocObj => {
         res.json(stockDocObj)
       });
+      
     } else if(typeof req.query.stock === 'object'){
-      const stock1 = req.query.stock[0];
-      const stock2 = req.query.stock[1];
+      
       //create resonse for two stock tickers
-      findUpdateTwoStocks(req.query.stock[0], req.query.stock[1], req.query.like, req.ip);      
+      findUpdateTwoStocks(req.query.stock[0], req.query.stock[1], req.query.like, req.ip)
+      .then(doubleStockData => {
+        res.json(doubleStockData);
+      })   
+      
     }
   });
-
+  
   //async function to compose the results of two promises
   const findUpdateTwoStocks = async function(stock1, stock2, usersLike, userIP){
-    const stock1Promise = await findUpdatePriceSingleStock(stock1, usersLike, userIP);
-    const stock2Promise = await findUpdatePriceSingleStock(stock2, usersLike, userIP);
+    const stock1obj = await findUpdatePriceSingleStock(stock1, usersLike, userIP);
+    const stock2obj = await findUpdatePriceSingleStock(stock2, usersLike, userIP);
+    
+    console.log('stock1Promise');
+    console.log(stock1Promise);
+    console.log('stock2Promise');
+    console.log(stock2Promise);
 
+    //write logic to calculate rel_likes
+    
     //compose stockPromises into one response
-    stock1Promise.then((stock1obj) => {
-      res.json({
-        "stockData": [
-          {
-            "stock": stock1obj.stock,
-            "price": stock1obj.price,
-            "rel_likes": "finish calculation for this code"
-          },
-          {
-            "stock": stock2Promise.stock,
-            "price": stock2Promise.price,
-            "rel_likes": "finish calculation for this code"
-          }
-        ]
-      })
-    })
+    const twoStockData = {
+      "stockData": [
+        {
+          "stock": stock1obj.stockData.stock,
+          "price": stock1obj.stockData.price,
+          "rel_likes": "finish calculation for this code"
+        },
+        {
+          "stock": stock2obj.stockData.stock,
+          "price": stock2obj.stockData.price,
+          "rel_likes": "finish calculation for this code"
+        }
+      ]
+    }
+
+    console.log('twoStockData');
+    console.log(twoStockData);    
+    return new Promise((resolve, reject) => {resolve(twoStockData)});
+    
   }
   
   //findUpdatePriceSingleStock adds the price to the findUpdateStock promise
