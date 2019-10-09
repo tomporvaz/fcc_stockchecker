@@ -65,12 +65,12 @@ module.exports = function (app) {
     const stock1obj = await findUpdatePriceSingleStock(stock1, usersLike, userIP);
     const stock2obj = await findUpdatePriceSingleStock(stock2, usersLike, userIP);
     
-    console.log('stock1Promise');
-    console.log(stock1Promise);
-    console.log('stock2Promise');
-    console.log(stock2Promise);
+    console.log('stock1obj');
+    console.log(stock1obj);
+    console.log('stock2obj');
+    console.log(stock2obj);
 
-    //write logic to calculate rel_likes
+
     
     //compose stockPromises into one response
     const twoStockData = {
@@ -78,12 +78,12 @@ module.exports = function (app) {
         {
           "stock": stock1obj.stockData.stock,
           "price": stock1obj.stockData.price,
-          "rel_likes": "finish calculation for this code"
+          "rel_likes": stock1obj.stockData.likes - stock2obj.stockData.likes
         },
         {
           "stock": stock2obj.stockData.stock,
           "price": stock2obj.stockData.price,
-          "rel_likes": "finish calculation for this code"
+          "rel_likes": stock2obj.stockData.likes - stock1obj.stockData.likes
         }
       ]
     }
