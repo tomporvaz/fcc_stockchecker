@@ -9,3 +9,6 @@ Project Stock Price Checker
 4) You will create all of the functional tests in `tests/2_functional-tests.js`
 
 
+Passes all tests on https://fcc-back-end-tester.glitch.me/[link](https://fcc-back-end-tester.glitch.me/) 
+
+
